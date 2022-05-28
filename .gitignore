@@ -1,0 +1,14 @@
+*.pyc
+db.sqlite3
+*initial.py
+*.pdf
+000*.py
+mydatabase
+workspace.xml
+aws.xml
+misc.xml
+modules.xml
+proyectoaic.iml
+vcs.xml
+media
+.idea
