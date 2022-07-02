@@ -1,0 +1,98 @@
+{% extends "core/core.html" %}
+{% load static from static %}
+{% block content %}
+    <p></p>
+    <section class="food_section layout_padding-bottom">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>
+          Services
+        </h2>
+      </div>
+
+      <ul class="filters_menu">
+        <li class="active" data-filter="*">All</li>
+        <li data-filter="">Data science</li>
+        <li data-filter="">Artificial intelligence</li>
+        <li data-filter="">Machine learning</li>
+      </ul>
+
+      <div class="filters-content">
+        <div class="row grid">
+          <div class="col-sm-6 col-lg-4 all pizza">
+            <div class="box">
+              <div>
+                <div class="img-box">
+                  <img src="{% static 'images/image2.png' %}" alt="">
+                </div>
+                <div class="detail-box">
+                  <h5>
+                    Delicious Pizza
+                  </h5>
+                  <p>
+                    Veniam debitis quaerat officiis quasi cupiditate quo, quisquam velit, magnam voluptatem repellendus sed eaque
+                  </p>
+                  <div class="options">
+                    <h6>
+                      $20
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4 all burger">
+            <div class="box">
+              <div>
+                <div class="img-box">
+                  <img src="{% static 'images/science-machine-learning.png' %}" alt="">
+                </div>
+                <div class="detail-box">
+                  <h5>
+                    Delicious Burger
+                  </h5>
+                  <p>
+                    Veniam debitis quaerat officiis quasi cupiditate quo, quisquam velit, magnam voluptatem repellendus sed eaque
+                  </p>
+                  <div class="options">
+                    <h6>
+                      $15
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4 all pizza">
+            <div class="box">
+              <div>
+                <div class="img-box">
+                  <img src="{% static 'images/artificial.jpg' %}" alt="">
+                </div>
+                <div class="detail-box">
+                  <h5>
+                    Delicious Pizza
+                  </h5>
+                  <p>
+                    Veniam debitis quaerat officiis quasi cupiditate quo, quisquam velit, magnam voluptatem repellendus sed eaque
+                  </p>
+                  <div class="options">
+                    <h6>
+                      $17
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-box">
+        <a href="">
+          View More
+        </a>
+      </div>
+    </div>
+  </section>
+    <p></p>
+{% endblock %}

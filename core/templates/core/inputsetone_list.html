@@ -1,0 +1,89 @@
+{% extends "core/core.html" %}
+{% load static from static %}
+{% block content %}
+<br>
+<section>
+    <div class="container">
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                <form action="/search-product"
+                      class="contactForm row g-3 needs-validation" novalidate id="formulario"
+                      method="GET">
+                    <div class="input-group form-floating mb-3">
+                        <input id="floatingInput"
+                               required
+                               name="document"
+                               type="text"
+                               minlength="7"
+                               maxlength="15"
+                               class="form-control"
+                               pattern="[AMS0-9]+"
+                               placeholder="1001234567">
+                        <label for="floatingInput" class="text-secondary"><small>Número de identificación</small></label>
+                        <span class="input-group-text">
+                            <button type="submit" value="Buscar" class="btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+                <br>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4"></div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4"></div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-12">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Tipo documento</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Identificación</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Primer nombre</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Segundo nombre</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Primer apellido</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Segundo apellido</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Fecha de nacimiento</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Genero</strong></small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for dat in obj%}
+                            <tr>
+                                <td class="text-secondary text-center">{{dat.tip_doc}}</td>
+                                <td class="text-secondary text-center">{{dat.identificacion}}</td>
+                                <td class="text-secondary">{{dat.pnombre}}</td>
+                                <td class="text-secondary">{{dat.snombre}}</td>
+                                <td class="text-secondary">{{dat.papellido}}</td>
+                                <td class="text-secondary">{{dat.sapellido}}</td>
+                                <td class="text-secondary text-center">{{dat.fecha_nac|date:"d-m-Y"}}</td>
+                                <td class="text-secondary text-center">{{dat.genero}}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if page_obj.has_previous %}
+                                <a class="btn btn-info" href="?page=1">&laquo; Inicio</a>
+                                <a class="btn btn-info" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                            {% endif %}
+
+                            <span class="btn btn-info">
+                                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                            </span>
+
+                            {% if page_obj.has_next %}
+                                <a class="btn btn-info" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                                <a class="btn btn-info" href="?page={{ page_obj.paginator.num_pages }}">Final &raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <br><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
