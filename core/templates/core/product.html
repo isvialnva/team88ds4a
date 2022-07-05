@@ -21,21 +21,15 @@
                 <hr>
                 <br><br>
                 <div class="row g-2">
-                     <form method="post">
-                            {% csrf_token %}
-                        <div class="modal-body" >
-                            {{ form|crispy }}
-                        </div>
-                        <div class="modal-footer">
-                            <input type="submit"  class="btn btn-primary" value="Guardar">
-                        </div>
-                     </form>
-                    <!--
                     <form method="post"
                           role="form"
-                          action="{% url 'procesarind' %}"
                           enctype="multipart/form-data"
                           class="uniForm form-class">{% csrf_token %}
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li class="text-danger text-right"><small>{{field.label_tag}} - {{ error }}</small></li>
+                            {% endfor %}
+                        {% endfor %}
                         <div class="row g-3">
                             <div class="form-group col-md-6 mb-0">
                                 <div class="form-floating">
@@ -63,13 +57,13 @@
                             </div>
                             <div class="form-group col-md-3 mb-0">
                                 <div class="form-floating">
-                                    {{ form.pnombre }}
+                                    {{ form.papellido }}
                                     <label class="text-secondary"><small>PRIMER APELLIDO</small></label>
                                 </div>
                             </div>
                             <div class="form-group col-md-3 mb-0">
                                 <div class="form-floating">
-                                    {{ form.snombre }}
+                                    {{ form.sapellido }}
                                     <label class="text-secondary"><small>SEGUNDO APELLIDO</small></label>
                                 </div>
                             </div>
@@ -89,52 +83,6 @@
                         <br>
                         <button type="submit" class="btn btn-primary">Procesar</button>
                     </form>
-
-                    <div class="col-md">
-                        <div class="form-floating">
-                            <select class="form-select" id="floatingSelectGrid">
-                                <option selected>--------</option>
-                                <option value="1"><small>Cédula de ciudadania</small></option>
-                                <option value="2"><small>Tarjeta de identidad</small></option>
-                                <option value="3"><small>Registro civil</small></option>
-                                <option value="3"><small>Pasaporte</small></option>
-                                <option value="3"><small>Cédula de extranjería</small></option>
-                                <option value="3"><small>Certificado de permanencia</small></option>
-                            </select>
-                            <label for="floatingSelectGrid">Tipo documento</label>
-                        </div>
-                    </div>
-                    <div class="col-md">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid1" placeholder="name@example.com" value="">
-                            <label class="text-secondary" for="floatingInputGrid1"><small>Número de documento</small></label>
-                        </div>
-                    </div>
-                    <div class="col-md">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid2" placeholder="name@example.com" value="">
-                            <label class="text-secondary" for="floatingInputGrid2"><small>Primer nombre</small></label>
-                        </div>
-                    </div>
-                    <div class="col-md">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid3" placeholder="name@example.com" value="">
-                            <label class="text-secondary" for="floatingInputGrid3"><small>Segundo nombre</small></label>
-                        </div>
-                    </div>
-                    <div class="col-md">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid4" placeholder="name@example.com" value="">
-                            <label class="text-secondary" for="floatingInputGrid4"><small>Primer apellido</small></label>
-                        </div>
-                    </div>
-                    <div class="col-md">
-                        <div class="form-floating">
-                            <input type="text" class="form-control" id="floatingInputGrid5" placeholder="name@example.com" value="">
-                            <label class="text-secondary" for="floatingInputGrid5"><small>Segundo apellido</small></label>
-                        </div>
-                    </div>
-                    -->
                 </div>
                 <div id="plano">
 

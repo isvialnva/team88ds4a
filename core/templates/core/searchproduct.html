@@ -1,10 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends "core/core.html" %}
+{% load static from static %}
+{% block content %}
+<br>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4"></div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                {% if datos%}
+                <div class="card">
+                    <img src="{% static 'images/image2.png' %}" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title text-center text-secondary">Resultado</h5>
+                        <table class="table">
+                        {% for datos in datos %}
+                            <tr>
+                                <td>Tipo documento: </td>
+                                <td>{{datos.tip_doc}}</td>
+                            </tr>
+                            <tr>
+                                <td>Identificación: </td>
+                                <td>{{datos.identificacion}}</td>
+                            </tr>
+                            <tr>
+                                <td>Primer nombre</td>
+                                <td>{{datos.pnombre}}</td>
+                            </tr>
+                            <tr>
+                                <td>Segundo nombre</td>
+                                <td>{{datos.snombre}}</td>
+                            </tr>
+                            <tr>
+                                <td>Primer apellido</td>
+                                <td>{{datos.papellido}}</td>
+                            </tr>
+                            <tr>
+                                <td>Segundo apellido</td>
+                                <td>{{datos.sapellido}}</td>
+                            </tr>
+                            <tr>
+                                <td>Fecha de nacimiento</td>
+                                <td>{{datos.fecha_nac}}</td>
+                            </tr>
+                            <tr>
+                                <td>Genero</td>
+                                <td>{{datos.genero}}</td>
+                            </tr>
+                        {% endfor %}
+                        </table>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+                {% else %}
+                    <div class="alert alert-warning" role="alert">
+                        El número de documento no fue encontrado ... Desar ingresar datos a procesar
+                    </div>
+                    <a class="btn btn-warning btn-block" href="{% url 'registroadd' %}">Agregar nuevo registro</a>
+                <br><br>
+                {% endif %}
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}

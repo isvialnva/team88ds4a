@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView, CreateView, ListView
 from .models import Inputsetone
@@ -38,18 +38,23 @@ class ProductAdd(SuccessMessageMixin, CreateView):
     template_name = 'core/product.html'
     form_class = InputindForm
     success_message = "Registro guardado correctamente"
-    success_url = '/appprestadorgen/asignaprestador/'
     context_object_name = 'obj'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
 
+    def get_success_url(self):
+        return reverse('listproduct')
+
 
 def productsearch(request):
-    doc = request.GET.get('document')
-    print(doc)
-    return render(request, 'core/searchproduct.html', {'resa': None, 'res': None})
+    doc = str(request.GET.get('document'))
+    dat = Inputsetone.objects.filter(identificacion__icontains=doc)
+    context = {
+        'datos': dat
+    }
+    return render(request, 'core/searchproduct.html', context)
 
 
 def procesarindividual(request):
