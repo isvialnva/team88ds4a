@@ -1,10 +1,10 @@
 from django import forms
-from .models import Inputsetone
+from .models import Inputsetone, Inputsettwo
 
 
 class InputindForm(forms.ModelForm):
     class Meta:
-        model = Inputsetone
+        model = Inputsettwo
         fields = ('tip_doc', 'identificacion', 'pnombre', 'snombre', 'papellido', 'sapellido', 'fecha_nac', 'genero')
         widgets = {
             'tip_doc': forms.Select(attrs={'class': 'form-control'}),

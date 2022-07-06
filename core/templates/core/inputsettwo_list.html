@@ -46,6 +46,7 @@
                                 <th class="text-secondary text-center" scope="col"><small><strong>Segundo apellido</strong></small></th>
                                 <th class="text-secondary text-center" scope="col"><small><strong>Fecha de nacimiento</strong></small></th>
                                 <th class="text-secondary text-center" scope="col"><small><strong>Genero</strong></small></th>
+                                <th class="text-secondary text-center" scope="col"><small><strong>Acciones</strong></small></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -59,6 +60,9 @@
                                 <td class="text-secondary">{{dat.sapellido}}</td>
                                 <td class="text-secondary text-center">{{dat.fecha_nac|date:"d-m-Y"}}</td>
                                 <td class="text-secondary text-center">{{dat.genero}}</td>
+                                <td class="text-secondary text-center">
+                                    <a href="{% url 'matchstring' %}"><i class="fas fa-cog text-primary"></i></a>
+                                </td>
                             </tr>
                         {% endfor %}
                         </tbody>
