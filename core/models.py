@@ -1,4 +1,6 @@
+from django.core.validators import FileExtensionValidator
 from django.core.validators import RegexValidator
+import os
 from django.db import models
 
 
@@ -78,3 +80,24 @@ class Inputsettwo(models.Model):
 
     class Meta:
         ordering = ["identificacion"]
+
+
+class CargueInput(models.Model):
+    archivo = models.FileField('Archivo de requeridos',
+                               upload_to='01_DATA/',
+                               validators=[FileExtensionValidator(['csv'])])
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated = models.DateTimeField(auto_now=True, verbose_name="Fecha de edición")
+
+    objects = models.Manager()
+
+    def delete(self, *args, **kwargs):
+        if os.path.isfile(self.archivo.path):
+            os.remove(self.archivo.path)
+        super(CargueInput, self).delete(*args, **kwargs)
+
+    def __str__(self):
+        return self.archivo
+
+    class Meta:
+        ordering = ["archivo"]

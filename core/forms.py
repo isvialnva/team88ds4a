@@ -1,5 +1,5 @@
 from django import forms
-from .models import Inputsetone, Inputsettwo
+from .models import Inputsetone, Inputsettwo, CargueInput
 
 
 class InputindForm(forms.ModelForm):
@@ -40,3 +40,10 @@ class InputindForm(forms.ModelForm):
                     'type': 'date'}),
             'genero': forms.Select(attrs={'class': 'form-control'}),
         }
+
+
+class FormCargueInputOne(forms.ModelForm):
+    class Meta:
+        model = CargueInput
+        fields = ['id', 'archivo']
+

@@ -1,0 +1,41 @@
+{% extends "core/core.html" %}
+{% load static from static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<br>
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#plano">Cargue archivo plano</a>
+                    </li>
+                </ul>
+                <p></p>
+                <div id="plano">
+                    <p class="text-right"><a href="{% url 'addcsv' %}">Agregar csv</a></p>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tr>
+                                <td>Archivo</td>
+                                <td>Acciones</td>
+                            </tr>
+                            {% for data in archivos %}
+                            <tr>
+                                <td>{{data.id}} - {{data.archivo}}</td>
+                                <td>
+                                    <a href="{% url 'deletecsv' data.id %}">Eliminar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <p class="text-right"><a href="{% url 'matchstring' %}">Procesar</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<br>
+{% endblock %}

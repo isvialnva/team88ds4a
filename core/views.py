@@ -3,10 +3,13 @@ import numpy as np
 import recordlinkage
 import unicodedata
 from django.shortcuts import render, reverse
+from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView, CreateView, ListView
-from .models import Inputsetone, Inputsettwo
-from .forms import InputindForm
+from django.views.generic.edit import DeleteView
+from .models import Inputsetone, Inputsettwo, CargueInput
+from .forms import InputindForm, FormCargueInputOne
+from proyecto.settings import MEDIA_ROOT
 
 # Renaming Columns
 COLUMN_NAMES = {
@@ -115,6 +118,34 @@ class ProductAdd(SuccessMessageMixin, CreateView):
         return reverse('listproductsinproc')
 
 
+class Listcsv(TemplateView):
+    template_name = "core/htmlcsv.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['archivos'] = CargueInput.objects.all().values('id', 'archivo')
+        return context
+
+
+class AddInput(SuccessMessageMixin, CreateView):
+    model = CargueInput
+    form_class = FormCargueInputOne
+    success_message = "Registro guardado correctamente"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def get_success_url(self):
+        return reverse('listcsv')
+
+
+class DeleteInput(SuccessMessageMixin, DeleteView):
+    model = CargueInput
+    success_url = reverse_lazy('listcsv')
+    success_message = "Registro eliminado correctamente"
+
+
 def productsearch(request):
     doc = str(request.GET.get('document'))
     dat = Inputsetone.objects.filter(identificacion__icontains=doc)
@@ -179,21 +210,20 @@ def clean_data(input_df):
     Cleans input dataframe and returns output dataframe modified.
     """
     output_df = input_df.copy()
-    # output_df['id'] = output_df['identificacion'].replace(DOCUMENT_REPLACEMENTS, None, regex=True)
-    # output_df['id'] = output_df['identificacion'].apply(lambda x: x.replace(DOCUMENT_REPLACEMENTS, ""))
+    output_df['id'] = output_df['id'].replace(DOCUMENT_REPLACEMENTS, regex=True)  # Document corrections
     output_df = output_df.fillna('')  # Fill nan values as blank
 
-    # output_df = output_df.apply(lambda x: x.str.upper())  # Ensures all letters are capitalized.
+    output_df = output_df.apply(lambda x: x.str.upper())  # Ensures all letters are capitalized.
 
     output_df = output_df.replace(NAMES_REPLACEMENTS, regex=True)  # Words corrections
     output_df[['name1', 'name2', 'lastname1', 'lastname2']] = output_df[
-        ['pnombre', 'snombre', 'papellido', 'sapellido']].replace('[0-9]', '', regex=True)  # Remove numbers in names
+        ['name1', 'name2', 'lastname1', 'lastname2']].replace('[0-9]', '', regex=True)  # Remove numbers in names
     output_df = output_df.replace(CHAR_REPLACEMENTS, regex=True)  # Character corrections
     output_df[['name1', 'name2', 'lastname1', 'lastname2']] = output_df[
-        ['pnombre', 'snombre', 'papellido', 'sapellido']].applymap(lambda x: strip_accents(str(x)))  # Remove accents
+        ['name1', 'name2', 'lastname1', 'lastname2']].applymap(lambda x: strip_accents(str(x)))  # Remove accents
     output_df = output_df.replace(SPECIAL_CHAR_REPLACEMENTS, regex=True)  # Special character corrections
     output_df[['name1', 'name2', 'lastname1', 'lastname2']] = output_df[
-        ['pnombre', 'snombre', 'papellido', 'sapellido']].applymap(
+        ['name1', 'name2', 'lastname1', 'lastname2']].applymap(
         lambda x: remove_repeated_letters(str(x)))  # Remove consecutive letters
 
     output_df = output_df.replace(r'[^\w\s]', '', regex=True)  # Remove non alphanumeric symbols
@@ -204,7 +234,7 @@ def clean_data(input_df):
 
     output_df = output_df.drop_duplicates()  # Remove duplicates
 
-    output_df['id'] = output_df['identificacion'].replace(r'^\s*$', np.nan, regex=True)  # Remove leading spaces in id numbers
+    output_df['id'] = output_df['id'].replace(r'^\s*$', np.nan, regex=True)  # Remove leading spaces in id numbers
     return output_df
 
 
@@ -270,20 +300,20 @@ def levenshtein(seq1, seq2):
     return (matrix[size_x - 1, size_y - 1])
 
 
-def prepare_df(input_type='multiple', csv_filename=None, doc_id='', name1='', name2='', lastname1='', lastname2=''):
+def prepare_df(input_type='multiple', csv_filename=None, doc_id='0', name1='n1', name2='n2', lastname1='n3',
+               lastname2='n4'):
     """
     Prepares the dataframe to be used in the search. Returns the original dataframe and the preprocessed one.
     This method can by used for a multiple search by loading a CSV file (same conditions as above) or as a single search by specifying a name to search.
     """
     if input_type == 'single':
-        data = {
-            'id': str(doc_id),
+        df = pd.DataFrame({
+            'ide': doc_id,
             'name1': name1,
             'name2': name2,
             'lastname1': lastname1,
             'lastname2': lastname2,
-        }
-        df = pd.DataFrame(data=data, index=[0])
+        })
     elif input_type == 'multiple':
         df = read_data(csv_filename)
     process_df = clean_data(df)
@@ -311,7 +341,7 @@ def match_by_id(val_process_df, ruv_process_df):
                 cos_sim.append(cosine_sim)
                 indices_val.append(row1[0])
                 indices_ruv.append(row2[0])
-    not_found = [x for x in val_process_df.identificacion if x not in ids_found]
+    not_found = [x for x in val_process_df.id if x not in ids_found]
     results_df = pd.DataFrame(data={'index_val': indices_val, 'index_ruv': indices_ruv, 'cos_sim': cos_sim})
     return results_df, not_found
 
@@ -350,7 +380,7 @@ def match_persons(val_process_df, ruv_process_df, n_results=1, method='cosine'):
     print('{} document coincidences.'.format(int(results_id.shape[0])))
     if len(not_found) > 0:
         print('{} documents not found in RUV. Searching by full name.'.format(int(len(not_found))))
-        search_df = val_process_df[val_process_df.identificacion.isin(not_found)]
+        search_df = val_process_df[val_process_df.id.isin(not_found)]
         results_fullname = match_by_fullname(search_df, ruv_process_df, n_results, method)
         print('Results found. Displaying {} closest results for each name.'.format(n_results))
     return results_id, results_fullname
@@ -375,8 +405,18 @@ def retrieve_data_origin(results_df, val_raw_df, ruv_raw_df, threshold):
     return results
 
 
-def find_persons(ruv_raw_df, ruv_process_df, input_type='multiple', csv_filename=None, doc_id='', name1='', name2='',
-                 lastname1='', lastname2='', n_results=1, method='cosine', threshold=0.9):
+def find_persons(ruv_raw_df,
+                 ruv_process_df,
+                 input_type='multiple',
+                 csv_filename=None,
+                 doc_id='',
+                 name1='',
+                 name2='',
+                 lastname1='',
+                 lastname2='',
+                 n_results=1,
+                 method='cosine',
+                 threshold=0.9):
     """
     Main function. Searches the persons in the input dataframe against the RUV dataframe.
     First preprocess the search dataframe, then searches by id and the ids not found are searched by fullname.
@@ -392,32 +432,28 @@ def find_persons(ruv_raw_df, ruv_process_df, input_type='multiple', csv_filename
 
 def machstring(request):
     """
-
     """
+    data = CargueInput.objects.all().values('id')
+    idar = []
+    for dat in data:
+        idar.append(dat['id'])
+    input1 = CargueInput.objects.get(id=idar[0])
+    input2 = CargueInput.objects.get(id=idar[1])
 
-    queryone = Inputsettwo.objects.filter(procesado=False). \
-        values('tip_doc', 'identificacion', 'pnombre', 'snombre', 'papellido', 'sapellido', 'fecha_nac', 'genero')
-    querytwo = Inputsetone.objects.all(). \
-        values('tip_doc', 'identificacion', 'pnombre', 'snombre', 'papellido', 'sapellido', 'fecha_nac', 'genero')
-    df1 = pd.DataFrame(queryone)
-    df2 = pd.DataFrame(querytwo)
+    RUV_db1 = MEDIA_ROOT + '/' + str(input1.archivo)
+    inputtwo = MEDIA_ROOT + '/' + str(input2.archivo)
 
-    # algoritmo
-    ruv_raw = df1.fillna('')
+    ruv_raw = read_data(RUV_db1)
+    ruv_raw = ruv_raw.fillna('')
     ruv_clean = clean_data(ruv_raw)
     ruv_full = preprocess_names(ruv_clean)
-
-    results_id, not_found = match_by_id(val_process_df, ruv_process_df)
-    results_id, results_fullname = match_persons(df2, ruv_full, 1, method='cosine')
-
-    for dat in queryone:
-        doc_id = dat['identificacion']
-        name1 = dat['pnombre']
-        name2 = dat['snombre']
-        lastname1 = dat['papellido']
-
+    val_raw, val_full = prepare_df('multiple', inputtwo)
+    results_id1, results_fullname1 = find_persons(val_raw, val_full, 'multiple', inputtwo, n_results=5, threshold=0.9)
+    df03rs = results_fullname1.to_html(justify='center',
+                                       index=False,
+                                       classes='table table-stripped table-sm text-secondary')
     context = {
-        'ruv_raw': ruv_raw,
-        'ruv_full': ruv_full,
+        'results_id1': df03rs
     }
+
     return render(request, "core/listmatch.html", context)

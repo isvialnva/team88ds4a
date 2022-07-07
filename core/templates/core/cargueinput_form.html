@@ -4,12 +4,13 @@
 {% block content %}
 <br>
 <section>
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <div class="table-responsive">
-                    {{results_id1|safe}}
-                </div>
+                <form method="post" enctype="multipart/form-data">{% csrf_token %}
+                  {{ form.as_p }}
+                  <input type="submit" value="Guardar">
+              </form>
             </div>
         </div>
     </div>
