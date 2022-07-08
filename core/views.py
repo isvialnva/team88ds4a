@@ -448,7 +448,7 @@ def machstring(request):
     ruv_clean = clean_data(ruv_raw)
     ruv_full = preprocess_names(ruv_clean)
     val_raw, val_full = prepare_df('multiple', inputtwo)
-    results_id1, results_fullname1 = find_persons(val_raw, val_full, 'multiple', inputtwo, n_results=5, threshold=0.9)
+    results_id1, results_fullname1 = find_persons(ruv_raw, ruv_full, 'multiple', inputtwo, n_results=100, threshold=0.9)
     df03rs = results_fullname1.to_html(justify='center',
                                        index=False,
                                        classes='table table-stripped table-sm text-secondary')
